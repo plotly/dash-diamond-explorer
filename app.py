@@ -239,6 +239,8 @@ def drawVolumeGraph(hoverData, slider_value):
             name='Price/Carat'
         )
 
+    lowBound = min(0.9, min(lengthWidthRatio)-0.25)
+    upBound = max(1.5, max(lengthWidthRatio)+0.25)
     fig = Figure(
         data=[trace1, trace2],
         layout=dict(
@@ -249,7 +251,7 @@ def drawVolumeGraph(hoverData, slider_value):
             showlegend=False,
             yaxis=dict(
                 title='Length to Width Ratio',
-                range=[0, 3],
+                range=[lowBound, upBound],
                 showgrid=False
             ),
             yaxis2=dict(
@@ -362,7 +364,7 @@ def redrawGraph(x, y, color, row, col, size, checklist, prevLayout):
 
 external_css = ["https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css",
                 "//fonts.googleapis.com/css?family=Raleway:400,300,600",
-                "https://cdn.rawgit.com/plotly/dash-app-stylesheets/af8e469522e38e1a2340e7d32db30b7c34760df8/dash-diamonds-explorer",
+                "https://codepen.io/alishobeiri/pen/weeYdK.css?v=plotly",
                 "https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"]
 
 for css in external_css:
