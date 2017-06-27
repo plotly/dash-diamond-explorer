@@ -9,11 +9,8 @@ import dash_html_components as html
 from sklearn.utils import shuffle
 from plotly.graph_objs import *
 
-import pprint
 import pandas as pd
-import random
 import numpy as np
-import math
 from copy import deepcopy
 
 diamonds = pd.read_csv("diamonds.csv")
