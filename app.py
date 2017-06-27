@@ -242,6 +242,7 @@ def drawVolumeGraph(hoverData, slider_value):
     fig = Figure(
         data=[trace1, trace2],
         layout=dict(
+            title="Metrics vs Forty Closely Sampled Diamonds",
             paper_bgcolor="#FBFBFB",
             bargap=0.01,
             bargroupgap=0,
@@ -261,7 +262,8 @@ def drawVolumeGraph(hoverData, slider_value):
             xaxis=dict(
                 range=[zVal[0]-0.5, zVal[len(zVal)-1]+0.5],
                 gridcolor="#FBFBFB",
-                title="Value Compared to Peers"
+                title="Diamond Index",
+                nticks=41
             )
         )
     )
