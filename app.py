@@ -362,7 +362,7 @@ def redrawGraph(x, y, color, row, col, size, checklist, prevLayout):
 
 external_css = ["https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css",
                 "//fonts.googleapis.com/css?family=Raleway:400,300,600",
-                "https://codepen.io/alishobeiri/pen/weeYdK.css?v=plotly",
+                "https://cdn.rawgit.com/plotly/dash-app-stylesheets/af8e469522e38e1a2340e7d32db30b7c34760df8/dash-diamonds-explorer",
                 "https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"]
 
 for css in external_css:
