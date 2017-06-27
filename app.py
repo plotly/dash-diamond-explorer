@@ -202,7 +202,6 @@ def drawVolumeGraph(value):
 def drawVolumeGraph(hoverData, slider_value):
     index = hoverData['points'][0]['pointNumber']
     indexOffset = index
-    print index
     if index > slider_value:
         index = index - slider_value
         indexOffset = index
@@ -210,11 +209,9 @@ def drawVolumeGraph(hoverData, slider_value):
         indexOffset = slider_value-20
     elif index-20 < 0:
         indexOffset = 20
-    print(index)
     zVal = []
     for i in range(indexOffset-20, indexOffset+20, 1):
         zVal.append(i)
-    print("Inside draw volume")
     xVal = diamonds.iloc[indexOffset-20:indexOffset+20]['x']
     yVal = diamonds.iloc[indexOffset-20:indexOffset+20]['y']
     priceVal = diamonds.iloc[indexOffset-20:indexOffset+20]['price']
@@ -276,8 +273,6 @@ def drawVolumeGraph(hoverData, slider_value):
 
 
 def relabel(x, fig, i):
-    for x in fig['layout']:
-        print(x)
     if i is 0:
         val = 'xaxis'
     else:
@@ -314,11 +309,11 @@ def relabel(x, fig, i):
 def redrawGraph(x, y, color, row, col, size, checklist, prevLayout):
     df = deepcopy(diamonds[:size])
     df = df.reset_index(drop=True)
-    print(x)
-    print(y)
-    print(row)
-    print(col)
-    print(color)
+    # print(x)
+    # print(y)
+    # print(row)
+    # print(col)
+    # print(color)
     rowVal = row
     colVal = col
     if(row == 'None'):
