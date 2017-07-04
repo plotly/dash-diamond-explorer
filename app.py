@@ -113,7 +113,7 @@ app.layout = html.Div([
                 {'label': 'y', 'value': 'y'},
                 {'label': 'z', 'value': 'z'}
             ],
-            value='depth'
+            value='cut'
         ),
         html.P("Color"),
         dcc.Dropdown(
