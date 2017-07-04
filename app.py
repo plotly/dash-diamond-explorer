@@ -254,7 +254,6 @@ def redrawGraph(x, y, color, row, col, size, checklist, prevLayout):
         facet_row=rowVal,
         facet_col=colVal,
         marker=dict(
-            opacity=0.5,
             size=4,
             line=dict(
                 width=0.1,
