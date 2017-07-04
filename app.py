@@ -121,9 +121,9 @@ app.layout = html.Div([
             options=[
                 {'label': 'None', 'value': 'None'},
                 {'label': 'carat', 'value': 'carat'},
-                {'label': 'cut', 'value': 'cut'},
-                {'label': 'color', 'value': 'color'},
-                {'label': 'clarity', 'value': 'clarity'},
+                {'label': 'cut', 'value': 'cut-labels'},
+                {'label': 'color', 'value': 'color-labels'},
+                {'label': 'clarity', 'value': 'clarity-labels'},
                 {'label': 'depth', 'value': 'depth'},
                 {'label': 'table', 'value': 'table'},
                 {'label': 'price', 'value': 'price'},
@@ -162,9 +162,8 @@ app.layout = html.Div([
         }),
     html.Div([
             dcc.Graph(id='facet-grid'),
-            dcc.Graph(id='volume-graph')
     ], className="ten columns")
-], className="twelve columns app", style={'margin-left': '-10px', 'background': '#FBFBFB'})
+], className="twelve columns app", style={'margin-left': '-10px'})
 
 
 def jitter(dataFrame, x, y):
@@ -182,7 +181,9 @@ def jitter(dataFrame, x, y):
         dfCopy[x] = dfCopy[x] * np.random.uniform(.998, 1.002, len(dfCopy[y]))
     return dfCopy
 
+
 def discrete(name):
+    print("Entered discrete")
     if name == 'cut' or name == 'clarity' or name == 'color':
         return True
     else:
@@ -194,91 +195,13 @@ def discrete(name):
 def drawVolumeGraph(value):
     return str(value)
 
-@app.callback(Output("volume-graph", "figure"),
-              [Input("facet-grid", "hoverData")], [State('sameple-slider', 'value')])
-def drawVolumeGraph(hoverData, slider_value):
-    index = hoverData['points'][0]['pointNumber']
-    indexOffset = index
-    if index > slider_value:
-        index = index - slider_value
-        indexOffset = index
-    if index+20 > slider_value:
-        indexOffset = slider_value-20
-    elif index-20 < 0:
-        indexOffset = 20
-    zVal = []
-    for i in range(indexOffset-20, indexOffset+20, 1):
-        zVal.append(i)
-    xVal = diamonds.iloc[indexOffset-20:indexOffset+20]['x']
-    yVal = diamonds.iloc[indexOffset-20:indexOffset+20]['y']
-    priceVal = diamonds.iloc[indexOffset-20:indexOffset+20]['price']
-    caratVal = diamonds.iloc[indexOffset-20:indexOffset+20]['carat']
-    lengthWidthRatio = (xVal/yVal)
-    colorVal = []
-    for i in zVal:
-        if(i == index):
-            colorVal.append("rgb(119, 150, 203, 0.5)")
-        else:
-            colorVal.append("rgb(163, 188, 249, 0.5)")
-    trace1 = Bar(
-            x=zVal,
-            y=lengthWidthRatio,
-            marker=dict(
-                color=colorVal
-            ),
-            name='Len/Width'
-        )
-    trace2 = Scatter(
-            x=zVal,
-            y=priceVal/caratVal,
-            mode='lines+markers',
-            marker=dict(
-                color='#F9B9F2'
-            ),
-            yaxis='y2',
-            name='Price/Carat'
-        )
-
-    lowBound = min(0.9, min(lengthWidthRatio)-0.25)
-    upBound = max(1.5, max(lengthWidthRatio)+0.25)
-    fig = Figure(
-        data=[trace1, trace2],
-        layout=dict(
-            title="Metrics vs Forty Closely Sampled Diamonds",
-            paper_bgcolor="#FBFBFB",
-            bargap=0.01,
-            bargroupgap=0,
-            showlegend=False,
-            yaxis=dict(
-                title='Length to Width Ratio',
-                range=[lowBound, upBound],
-                showgrid=False
-            ),
-            yaxis2=dict(
-                title = 'Price per Carat',
-                side='right',
-                zeroline=False,
-                gridcolor="#FBFBFB",
-                overlaying='y'
-            ),
-            xaxis=dict(
-                range=[zVal[0]-0.5, zVal[len(zVal)-1]+0.5],
-                gridcolor="#FBFBFB",
-                title="Diamond Index",
-                nticks=41
-            )
-        )
-    )
-
-    return fig
-
 
 def relabel(x, fig, i):
+    x = str(x)
     if i is 0:
         val = 'xaxis'
     else:
         val = 'yaxis'
-
     if x == 'color':
         for x in fig['layout']:
             if val in x:
@@ -288,6 +211,7 @@ def relabel(x, fig, i):
     if x == 'cut':
         for x in fig['layout']:
             if val in x:
+                print("Entered second if and relabel")
                 fig['layout'][x]['range'] = [0.5, 5.5]
                 fig['layout'][x]['tickvals'] = [1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5]
                 fig['layout'][x]['ticktext'] = ["Fair", "", "Good", "", "Very Good", "", "Premium", "", "Ideal"]
@@ -297,6 +221,7 @@ def relabel(x, fig, i):
                 fig['layout'][x]['range'] = [0.5, 8.5]
                 fig['layout'][x]['tickvals'] = [1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8]
                 fig['layout'][x]['ticktext'] = ["I1", "", "SI2", "", "SI1", "", "VS2", "", "VS1", "", "VVS2", "", "VVS1", "", "IF"]
+
 
 
 
@@ -310,11 +235,6 @@ def relabel(x, fig, i):
 def redrawGraph(x, y, color, row, col, size, checklist, prevLayout):
     df = deepcopy(diamonds[:size])
     df = df.reset_index(drop=True)
-    # print(x)
-    # print(y)
-    # print(row)
-    # print(col)
-    # print(color)
     rowVal = row
     colVal = col
     if(row == 'None'):
@@ -325,8 +245,7 @@ def redrawGraph(x, y, color, row, col, size, checklist, prevLayout):
         color = None
     if('jitter' in checklist):
         df = pd.concat([deepcopy(df), jitter(df, x, y)], ignore_index=True)
-        # print(df)
-    fig = None
+    print(df.head())
     fig = ff.create_facet_grid(
         df,
         x=x,
@@ -335,20 +254,16 @@ def redrawGraph(x, y, color, row, col, size, checklist, prevLayout):
         facet_row=rowVal,
         facet_col=colVal,
         marker=dict(
+            opacity=0.5,
             size=4,
-            color='#F9B9F2',
             line=dict(
-                width=0.3,
+                width=0.1,
                 color='black'
             ),
         ),
     )
-    if discrete(x):
-        relabel(x, fig, 0)
-    if discrete(y):
-        relabel(y, fig, 1)
-
     fig['layout']['hovermode'] = 'closest'
+    fig['layout']['dragmode'] = 'select'
     fig['layout']['height'] = 900
     fig['layout']['width'] = None
     if not rowVal and not colVal:
@@ -359,6 +274,12 @@ def redrawGraph(x, y, color, row, col, size, checklist, prevLayout):
         fig['layout']['xaxis']['title'] = x
         fig['layout']['annotations'][0]['text'] = ""
     fig['layout']['autosize'] = True
+
+    if discrete(x):
+        relabel(x, fig, 0)
+    if discrete(y):
+        relabel(y, fig, 1)
+
     return fig
 
 
