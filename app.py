@@ -65,8 +65,8 @@ app.layout = html.Div([
             dcc.Slider(
                 id='sameple-slider',
                 min=1,
-                max=53940,
-                marks={1: "1", 10000: "10K", 25000: "20K", 40000: "40K", 53940: "53940"},
+                max=30000,
+                marks={1: "1", 10000: "10K", 20000: "20K", 30000: "30K"}, # "20K", 40000: "40K", 53940: "53940"
                 value=1000,
                 step=1000
             ),
@@ -238,6 +238,7 @@ def redrawGraph(x, y, color, row, col, size, checklist, prevLayout):
     df = df.reset_index(drop=True)
     rowVal = row
     colVal = col
+    trace = 'scattergl'
     if(row == 'None'):
         rowVal = None
     if(col == 'None'):
@@ -246,12 +247,15 @@ def redrawGraph(x, y, color, row, col, size, checklist, prevLayout):
         color = None
     if('jitter' in checklist):
         df = pd.concat([deepcopy(df), jitter(df, x, y)], ignore_index=True)
+    if ((rowVal is not None) and (colVal is not None)):
+        print("Both are not none")
+        trace='scatter'
     print(df.head())
     fig = ff.create_facet_grid(
         df,
         x=x,
         y=y,
-        trace_type='scattergl',
+        trace_type=trace,
         color_name=color,
         facet_row=rowVal,
         facet_col=colVal,
