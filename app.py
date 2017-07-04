@@ -251,6 +251,7 @@ def redrawGraph(x, y, color, row, col, size, checklist, prevLayout):
         df,
         x=x,
         y=y,
+        trace_type='scattergl',
         color_name=color,
         facet_row=rowVal,
         facet_col=colVal,
