@@ -131,6 +131,7 @@ app.layout = html.Div([
                 {'label': 'y', 'value': 'y'},
                 {'label': 'z', 'value': 'z'}
             ],
+            value='None'
         ),
         html.P("Facet Row"),
         dcc.Dropdown(
