@@ -65,12 +65,14 @@ app.layout = html.Div([
             dcc.Slider(
                 id='sameple-slider',
                 min=1,
-                max=30000,
-                marks={1: "1", 10000: "10K", 20000: "20K", 30000: "30K"}, # "20K", 40000: "40K", 53940: "53940"
-                value=1000,
-                step=1000
+                max=53940,
+                marks={1: "1", 10000: "10K", 20000: "20K", 30000: "30K",
+                       40000: "40K", 53940: "53940"},
+                       # "20K", 40000: "40K", 53940: "53940"
+                value=10000,
+                updatemode='mouseup'
             ),
-        ], className = "ten columns"),
+        ], className="ten columns"),
         html.Br(),
         html.Br(),
         html.Br(),
@@ -224,8 +226,6 @@ def relabel(x, fig, i):
                 fig['layout'][x]['ticktext'] = ["I1", "", "SI2", "", "SI1", "", "VS2", "", "VS1", "", "VVS2", "", "VVS1", "", "IF"]
 
 
-
-
 @app.callback(Output("facet-grid", "figure"),
               [Input("x-dropdown", "value"), Input("y-dropdown", "value"),
                Input("color-dropdown", "value"),
@@ -247,15 +247,14 @@ def redrawGraph(x, y, color, row, col, size, checklist, prevLayout):
         color = None
     if('jitter' in checklist):
         df = pd.concat([deepcopy(df), jitter(df, x, y)], ignore_index=True)
-    if ((rowVal is not None) and (colVal is not None)):
-        print("Both are not none")
-        trace='scatter'
-    print(df.head())
+    # if ((rowVal is not None) and (colVal is not None)):
+    #     print("Both are not none")
+    #     trace='scatter
     fig = ff.create_facet_grid(
         df,
         x=x,
         y=y,
-        trace_type=trace,
+        trace_type='scattergl',
         color_name=color,
         facet_row=rowVal,
         facet_col=colVal,
@@ -266,9 +265,10 @@ def redrawGraph(x, y, color, row, col, size, checklist, prevLayout):
                 color='black'
             ),
         ),
+        ggplot2=True
     )
     fig['layout']['hovermode'] = 'closest'
-    fig['layout']['dragmode'] = 'select'
+    fig['layout']['dragmode'] = 'zoom'
     fig['layout']['height'] = 900
     fig['layout']['width'] = None
     if not rowVal and not colVal:
@@ -284,6 +284,8 @@ def redrawGraph(x, y, color, row, col, size, checklist, prevLayout):
         relabel(x, fig, 0)
     if discrete(y):
         relabel(y, fig, 1)
+
+    print(fig)
 
     return fig
 
