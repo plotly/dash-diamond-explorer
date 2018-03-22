@@ -98,7 +98,8 @@ app.layout = html.Div([
                 {'label': 'y', 'value': 'y'},
                 {'label': 'z', 'value': 'z'}
             ],
-            value='carat'
+            value='carat',
+            clearable='false'
         ),
         html.P("Y"),
         dcc.Dropdown(
@@ -115,7 +116,8 @@ app.layout = html.Div([
                 {'label': 'y', 'value': 'y'},
                 {'label': 'z', 'value': 'z'}
             ],
-            value='cut'
+            value='cut',
+            clearable='false'
         ),
         html.P("Color"),
         dcc.Dropdown(
@@ -133,7 +135,8 @@ app.layout = html.Div([
                 {'label': 'y', 'value': 'y'},
                 {'label': 'z', 'value': 'z'}
             ],
-            value='None'
+            value='None',
+            clearable='false'
         ),
         html.P("Facet Row"),
         dcc.Dropdown(
@@ -144,7 +147,8 @@ app.layout = html.Div([
                 {'label': 'color', 'value': 'color-labels'},
                 {'label': 'clarity', 'value': 'clarity-labels'}
             ],
-            value="None"
+            value="None",
+            clearable='false'
         ),
         html.P("Facet Column"),
         dcc.Dropdown(
@@ -155,7 +159,8 @@ app.layout = html.Div([
                 {'label': 'color', 'value': 'color-labels'},
                 {'label': 'clarity', 'value': 'clarity-labels'}
             ],
-            value="None"
+            value="None",
+            clearable='false'
         ),
     ], className="two columns",
         style={
