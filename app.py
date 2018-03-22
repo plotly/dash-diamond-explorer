@@ -99,7 +99,7 @@ app.layout = html.Div([
                 {'label': 'z', 'value': 'z'}
             ],
             value='carat',
-            clearable='false'
+            clearable=False
         ),
         html.P("Y"),
         dcc.Dropdown(
@@ -117,7 +117,7 @@ app.layout = html.Div([
                 {'label': 'z', 'value': 'z'}
             ],
             value='cut',
-            clearable='false'
+            clearable=False
         ),
         html.P("Color"),
         dcc.Dropdown(
@@ -136,7 +136,7 @@ app.layout = html.Div([
                 {'label': 'z', 'value': 'z'}
             ],
             value='None',
-            clearable='false'
+            clearable=False
         ),
         html.P("Facet Row"),
         dcc.Dropdown(
@@ -148,7 +148,7 @@ app.layout = html.Div([
                 {'label': 'clarity', 'value': 'clarity-labels'}
             ],
             value="None",
-            clearable='false'
+            clearable=False
         ),
         html.P("Facet Column"),
         dcc.Dropdown(
@@ -160,7 +160,7 @@ app.layout = html.Div([
                 {'label': 'clarity', 'value': 'clarity-labels'}
             ],
             value="None",
-            clearable='false'
+            clearable=False
         ),
     ], className="two columns",
         style={
@@ -252,9 +252,6 @@ def redrawGraph(x, y, color, row, col, size, checklist, prevLayout):
         color = None
     if('jitter' in checklist):
         df = pd.concat([deepcopy(df), jitter(df, x, y)], ignore_index=True)
-    # if ((rowVal is not None) and (colVal is not None)):
-    #     print("Both are not none")
-    #     trace='scatter
     fig = ff.create_facet_grid(
         df,
         x=x,
