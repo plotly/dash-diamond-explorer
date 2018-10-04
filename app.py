@@ -55,8 +55,14 @@ mappingColor = {
 diamonds['cut-labels'] = diamonds['cut']
 diamonds['color-labels'] = diamonds['color']
 diamonds['clarity-labels'] = diamonds['clarity']
-diamonds = diamonds.replace({'cut': mappingCut, 'clarity': mappingClarity, 'color': mappingColor})
-print(diamonds)
+diamonds = diamonds.replace({'cut': mappingCut, 'clarity': mappingClarity,
+                            'color': mappingColor})
+
+# define column options
+# col_opts = [{'label': i, 'value': i} for i in diamonds.columns[1:]]
+# color_opts = [{'label': 'None', 'value': 'None'}] + col_options
+# facet_opts = [{'label': 'None', 'value': 'None'}] + col_options[:3]
+
 app.layout = html.Div([
     html.Div([
         html.P("Sample Size"),
@@ -191,7 +197,6 @@ def jitter(dataFrame, x, y):
 
 
 def discrete(name):
-    print("Entered discrete")
     if name == 'cut' or name == 'clarity' or name == 'color':
         return True
     else:
@@ -214,21 +219,28 @@ def relabel(x, fig, i):
         for x in fig['layout']:
             if val in x:
                 fig['layout'][x]['range'] = [0.5, 7.5]
-                fig['layout'][x]['tickvals'] = [1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7]
-                fig['layout'][x]['ticktext'] = ["J", "", "I", "", "H", "", "G", "", "F", "", "E", "", "D"]
+                fig['layout'][x]['tickvals'] = [1, 1.5, 2, 2.5, 3, 3.5, 4,
+                                                4.5, 5, 5.5, 6, 6.5, 7]
+                fig['layout'][x]['ticktext'] = ["J", "", "I", "", "H", "", "G",
+                                                "", "F", "", "E", "", "D"]
     if x == 'cut':
         for x in fig['layout']:
             if val in x:
-                print("Entered second if and relabel")
                 fig['layout'][x]['range'] = [0.5, 5.5]
-                fig['layout'][x]['tickvals'] = [1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5]
-                fig['layout'][x]['ticktext'] = ["Fair", "", "Good", "", "Very Good", "", "Premium", "", "Ideal"]
+                fig['layout'][x]['tickvals'] = [1, 1.5, 2, 2.5, 3, 3.5,
+                                                4, 4.5, 5]
+                fig['layout'][x]['ticktext'] = ["Fair", "", "Good", "",
+                                                "Very Good", "", "Premium",
+                                                "", "Ideal"]
     if x == 'clarity':
         for x in fig['layout']:
             if val in x:
                 fig['layout'][x]['range'] = [0.5, 8.5]
-                fig['layout'][x]['tickvals'] = [1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8]
-                fig['layout'][x]['ticktext'] = ["I1", "", "SI2", "", "SI1", "", "VS2", "", "VS1", "", "VVS2", "", "VVS1", "", "IF"]
+                fig['layout'][x]['tickvals'] = [1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5,
+                                                5, 5.5, 6, 6.5, 7, 7.5, 8]
+                fig['layout'][x]['ticktext'] = ["I1", "", "SI2", "", "SI1", "",
+                                                "VS2", "", "VS1", "", "VVS2",
+                                                "", "VVS1", "", "IF"]
 
 
 @app.callback(Output("facet-grid", "figure"),
@@ -243,13 +255,14 @@ def redrawGraph(x, y, color, row, col, size, checklist, prevLayout):
     df = df.reset_index(drop=True)
     rowVal = row
     colVal = col
+    colorVal = color
     trace = 'scattergl'
     if(row == 'None'):
         rowVal = None
     if(col == 'None'):
         colVal = None
     if(color == 'None'):
-        color = None
+        colorVal = None
     if('jitter' in checklist):
         df = pd.concat([deepcopy(df), jitter(df, x, y)], ignore_index=True)
     fig = ff.create_facet_grid(
@@ -257,7 +270,7 @@ def redrawGraph(x, y, color, row, col, size, checklist, prevLayout):
         x=x,
         y=y,
         trace_type='scattergl',
-        color_name=color,
+        color_name=colorVal,
         facet_row=rowVal,
         facet_col=colVal,
         marker=dict(
@@ -282,20 +295,57 @@ def redrawGraph(x, y, color, row, col, size, checklist, prevLayout):
         fig['layout']['annotations'][0]['text'] = ""
     fig['layout']['autosize'] = True
 
+    # hack solution to legendgroup'n
+    if colorVal is not None:
+        if (colorVal != rowVal and colorVal != colVal):
+            for j in range(0,len(fig['data'])):
+                fig['data'][j]['legendgroup'] = fig['data'][j]['name']
+                fig['data'][j]['showlegend'] = False
+            if (color == 'color-labels'):
+                for k in range(0,len(df['color-labels'].unique())):
+                    fig['data'][k]['showlegend'] = True
+            elif (color == 'cut-labels'):
+                for k in range(0,len(df['cut-labels'].unique())):
+                    fig['data'][k]['showlegend'] = True
+            elif (color == 'clarity-labels'):
+                for k in range(0,len(df['clarity-labels'].unique())):
+                    fig['data'][k]['showlegend'] = True
+        elif rowVal is not None and colVal is not None and rowVal != colVal and\
+                                    (colorVal == rowVal or colorVal == colVal):
+            for j in range(0,len(fig['data'])):
+                fig['data'][j]['legendgroup'] = fig['data'][j]['name']
+                fig['data'][j]['showlegend'] = False
+            if (color == 'color-labels'):
+                l = 0
+                for k in range(0,len(df['color-labels'].unique())):
+                    fig['data'][l]['showlegend'] = True
+                    l = l + (len(df['color-labels'].unique()) + 1)
+            elif (color == 'cut-labels'):
+                l = 0
+                for k in range(0,len(df['cut-labels'].unique())):
+                    fig['data'][l]['showlegend'] = True
+                    l = l + (len(df['cut-labels'].unique()) + 1)
+            elif (color == 'clarity-labels'):
+                l = 0
+                for k in range(0,len(df['clarity-labels'].unique())):
+                    fig['data'][l]['showlegend'] = True
+                    l = l + (len(df['clarity-labels'].unique()) + 1)
+
+
     if discrete(x):
         relabel(x, fig, 0)
     if discrete(y):
         relabel(y, fig, 1)
 
-    print(fig)
-
     return fig
 
 
-external_css = ["https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css",
-                "//fonts.googleapis.com/css?family=Raleway:400,300,600",
-                "https://codepen.io/alishobeiri/pen/weeYdK.css?v=plotly",
-                "https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"]
+external_css = [
+    "https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css",
+    "//fonts.googleapis.com/css?family=Raleway:400,300,600",
+    "https://codepen.io/plotly/pen/erVNXQ.css",
+    "https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+    ]
 
 for css in external_css:
     app.css.append_css({"external_url": css})
